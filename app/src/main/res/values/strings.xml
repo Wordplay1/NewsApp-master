@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">News App</string>
+    <!-- Empty Screen Message -->
+    <string name="empty_message">No Data Found</string>
+</resources>
