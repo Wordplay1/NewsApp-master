@@ -39,7 +39,7 @@ public class StoryLoader extends AsyncTaskLoader<List<Story>> {
         }
 
         // Perform the network request, parse the response, and extract a list of earthquakes.
-        List<Story> stories = QueryUtils.fetchEarthquakeData(mUrl);
+        List<Story> stories = QueryUtils.fetchStoryData(mUrl);
         return stories;
     }
 }

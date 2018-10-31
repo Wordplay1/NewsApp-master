@@ -21,6 +21,7 @@ import java.util.List;
 public final class QueryUtils {
 
     public static final String LOG_TAG = QueryUtils.class.getSimpleName();
+
     /**
      * Create a private constructor because no one should ever create a {@link QueryUtils} object.
      * This class is only meant to hold static variables and methods, which can be accessed
@@ -28,10 +29,11 @@ public final class QueryUtils {
      */
     private QueryUtils() {
     }
+
     /**
      * Query the USGS dataset and return a list of {@link Story} objects.
      */
-    public static List<Story> fetchEarthquakeData(String requestUrl) {
+    public static List<Story> fetchStoryData(String requestUrl) {
 
         try {
             Thread.sleep(2000);
@@ -60,12 +62,12 @@ public final class QueryUtils {
     /**
      * Returns new URL object from the given string URL.
      */
-    private static URL createUrl(String stringUrl){
+    private static URL createUrl(String stringUrl) {
         URL url = null;
-        try{
+        try {
             url = new URL(stringUrl);
-        }catch(MalformedURLException e){
-            Log.e(LOG_TAG,"Problem building the URL ",e);
+        } catch (MalformedURLException e) {
+            Log.e(LOG_TAG, "Problem building the URL ", e);
         }
         return url;
     }
@@ -145,13 +147,12 @@ public final class QueryUtils {
         List<Story> stories = new ArrayList<>();
 
 
-
         try {
 
             JSONObject baseJsonResponse = new JSONObject(storyJSON);
             JSONArray storyArray = baseJsonResponse.getJSONArray("features");
 
-            for(int i = 0; i < storyArray.length(); i++){
+            for (int i = 0; i < storyArray.length(); i++) {
                 JSONObject currentStory = storyArray.getJSONObject(i);
                 JSONObject properties = currentStory.getJSONObject("properties");
                 String title = properties.getString("title");
@@ -160,7 +161,7 @@ public final class QueryUtils {
                 String date = properties.getString("date");
                 String author = properties.getString("author");
 
-                Story story = new Story(title,section,url,date,author);
+                Story story = new Story(title, section, url, date, author);
                 stories.add(story);
 
             }
@@ -172,9 +173,10 @@ public final class QueryUtils {
             // If an error is thrown when executing any of the above statements in the "try" block,
             // catch the exception here, so the app doesn't crash. Print a log message
             // with the message from the exception.
-            Log.e("QueryUtils", "Problem parsing the earthquake JSON results", e);
+            Log.e("QueryUtils", "Problem parsing the story JSON results", e);
         }
 
-        // Return the list of earthquakes
+        // Return the list of stories
         return stories;
     }
+}
