@@ -16,6 +16,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.List;
 
 public final class QueryUtils {
 
@@ -28,9 +29,9 @@ public final class QueryUtils {
     private QueryUtils() {
     }
     /**
-     * Query the USGS dataset and return a list of {@link Earthquake} objects.
+     * Query the USGS dataset and return a list of {@link Story} objects.
      */
-    public static List<Earthquake> fetchEarthquakeData(String requestUrl) {
+    public static List<Story> fetchEarthquakeData(String requestUrl) {
 
         try {
             Thread.sleep(2000);
@@ -49,10 +50,10 @@ public final class QueryUtils {
         }
 
         // Extract relevant fields from the JSON response and create a list of {@link Earthquake}s
-        List<Earthquake> earthquakes = extractFeatureFromJson(jsonResponse);
+        List<Story> stories = extractFeatureFromJson(jsonResponse);
 
         // Return the list of {@link Earthquake}s
-        return earthquakes;
+        return stories;
     }
 
 
@@ -98,7 +99,7 @@ public final class QueryUtils {
                 Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
             }
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Problem retrieving the earthquake JSON results.", e);
+            Log.e(LOG_TAG, "Problem retrieving the article JSON results.", e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -132,34 +133,35 @@ public final class QueryUtils {
     }
 
     /**
-     * Return a list of {@link Earthquake} objects that has been built up from
+     * Return a list of {@link Story} objects that has been built up from
      * parsing a JSON response.
      */
-    public static List<Earthquake> extractFeatureFromJson(String earthquakeJSON) {
-        if (TextUtils.isEmpty(earthquakeJSON)) {
+    public static List<Story> extractFeatureFromJson(String storyJSON) {
+        if (TextUtils.isEmpty(storyJSON)) {
             return null;
         }
 
-        // Create an empty ArrayList that we can start adding earthquakes to
-        List<Earthquake> earthquakes = new ArrayList<>();
+        // Create an empty ArrayList that we can start adding stories to
+        List<Story> stories = new ArrayList<>();
 
 
 
         try {
 
-            JSONObject baseJsonResponse = new JSONObject(earthquakeJSON);
-            JSONArray earthquakeArray = baseJsonResponse.getJSONArray("features");
+            JSONObject baseJsonResponse = new JSONObject(storyJSON);
+            JSONArray storyArray = baseJsonResponse.getJSONArray("features");
 
-            for(int i = 0; i < earthquakeArray.length(); i++){
-                JSONObject currentEarthquake = earthquakeArray.getJSONObject(i);
-                JSONObject properties = currentEarthquake.getJSONObject("properties");
-                Double magnitude = properties.getDouble("mag");
-                String location = properties.getString("place");
+            for(int i = 0; i < storyArray.length(); i++){
+                JSONObject currentStory = storyArray.getJSONObject(i);
+                JSONObject properties = currentStory.getJSONObject("properties");
+                String title = properties.getString("title");
+                String section = properties.getString("section");
                 String url = properties.getString("url");
-                long time = properties.getLong("time");
+                String date = properties.getString("date");
+                String author = properties.getString("author");
 
-                Earthquake earthquake = new Earthquake(magnitude,location,time,url);
-                earthquakes.add(earthquake);
+                Story story = new Story(title,section,url,date,author);
+                stories.add(story);
 
             }
 
@@ -174,5 +176,5 @@ public final class QueryUtils {
         }
 
         // Return the list of earthquakes
-        return earthquakes;
+        return stories;
     }
